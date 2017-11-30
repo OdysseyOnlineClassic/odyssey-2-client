@@ -1,0 +1,17 @@
+{
+  "name": "odyssey-2-client",
+  "version": "0.0.1",
+  "description": "",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "electron": "^1.7.9",
+    "mithril": "^1.1.5"
+  },
+  "devDependencies": {}
+}

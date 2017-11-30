@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "alwaysStrict": true,
+    "experimentalDecorators": true,
+    "moduleResolution": "node",
+    "module": "none",
+    "noImplicitAny": false,
+    "outDir": "bin",
+    "sourceMap": true,
+    "target": "es6"
+  },
+  "include": [
+    "node_modules/@types/node/index.d.ts",
+    "definitions/**/*.d.ts",
+    "lib/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "bin"
+  ]
+}
