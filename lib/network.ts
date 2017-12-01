@@ -1,11 +1,11 @@
 import * as net from 'net';
 import { EventEmitter } from 'events';
-import 'odyssey-2-shared';
+import { Message } from 'odyssey-2-shared';
 
 class Network extends EventEmitter {
   protected socket: net.Socket;
   private data: Buffer;
-  private msg: Odyssey.Shared.Message;
+  private msg: Message;
   private packetOrder: number = 0;
 
   constructor(readonly host: string, readonly port: number) {
@@ -60,7 +60,7 @@ class Network extends EventEmitter {
 
       let length = data.readUInt16BE(0) - 1; //We're not including the Packet ID
       let msgId = data.readUInt8(4);
-      this.msg = new Odyssey.Shared.Message(msgId, length);
+      this.msg = new Message(msgId, length);
       remainingData = this.msg.append(data.slice(5));
     }
     else {
