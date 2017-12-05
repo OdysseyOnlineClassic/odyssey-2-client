@@ -2,7 +2,7 @@ import * as net from 'net';
 import { EventEmitter } from 'events';
 import { Message } from 'odyssey-2-shared';
 
-class Network extends EventEmitter {
+export class Network extends EventEmitter {
   protected socket: net.Socket;
   private data: Buffer;
   private msg: Message;

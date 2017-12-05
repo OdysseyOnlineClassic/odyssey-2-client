@@ -1,25 +1,25 @@
 const m = require('mithril');
-let auth = require('../models/auth');
+let Auth = require('../../models/auth');
 
-function login() {
-  m.route.set('/game');
+module.exports = Login;
+
+function Login(network) {
+  let auth = new Auth(network);
+  return {
+    canSubmit: false,
+    view: (vnode) => {
+      return m('div', [
+        m('input', {
+          type: 'text',
+          oninput: m.withAttr('value', auth.setUsername, auth)
+        }),
+        m('input', {
+          type: 'password',
+          oninput: m.withAttr('value', auth.setPassword, auth)
+        }),
+        m('button', { onclick: () => { console.log('exit'); } }, 'Exit'),
+        m('button', { onclick: auth.login.bind(auth), disabled: !auth.canSubmit() }, 'Login')
+      ]);
+    }
+  };
 }
-
-function exit() {
-
-}
-
-module.exports = {
-  view: () => {
-    return m('div', [
-      m('input', {
-        type: 'text'
-      }),
-      m('input', {
-        type: 'password'
-      }),
-      m('button', { onClick: exit }, 'Exit'),
-      m('button', { onclick: login }, 'Login')
-    ]);
-  }
-};

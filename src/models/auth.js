@@ -1,19 +1,24 @@
-const socket = require('net').Socket;
+'use strict';
 
-let Auth = {
-  username: '',
-  password: '',
-  setUsername: (value) => {
-    Login.username = value;
-  },
-  setPassword: (value) => {
-    Login.password = value;
-  },
-  canSubmit: () => {
-    return Login.username !== '' && Login.password !== '';
-  },
-  login: () => {
-
+class Auth {
+  constructor(net) {
+    this.net = net;
+    this.username = '';
+    this.password = '';
+  }
+  setUsername(value) {
+    this.username = value;
+  }
+  setPassword(value) {
+    this.password = value;
+  }
+  canSubmit() {
+    return this.username !== '' && this.password !== '';
+  }
+  login() {
+    console.log('Login');
+    console.log(this.username);
+    console.log(this.password);
   }
 }
 
