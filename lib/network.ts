@@ -67,5 +67,10 @@ export class Network extends EventEmitter {
       remainingData = this.msg.append(data);
     }
 
+    if (this.msg.complete) {
+      this.emit('message', this.msg);
+      this.msg = null;
+    }
+
   }
 }
