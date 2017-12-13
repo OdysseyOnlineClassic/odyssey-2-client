@@ -3,6 +3,8 @@
 const { app, BrowserWindow } = require('electron');
 const path = require('path');
 const url = require('url');
+const Network = require('./bin/network').Network;
+const GameState = require('./bin/game-state');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -11,6 +13,10 @@ let win;
 function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({ width: 300, height: 600, titleBarStyle: "hidden" })
+  win.odyssey = {
+    GameState: GameState,
+    Network: Network,
+  }
   win.setMenu(null);
 
   // and load the index.html of the app.
