@@ -1,5 +1,5 @@
 {
-  "name": "odyssey-online-client",
+  "name": "@odyssey/client",
   "version": "0.0.1",
   "description": "",
   "main": "src/main.js",
