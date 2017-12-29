@@ -25,6 +25,6 @@ export class GameState {
     let data = Buffer.from(username, 'utf8');
     data = Buffer.concat([data, Buffer.from([0])]);
     data = Buffer.concat([data, Buffer.from(password, 'utf8')]);
-    this.network.sendMessage(1, data);
+    this.network.send(1, data);
   }
 }
