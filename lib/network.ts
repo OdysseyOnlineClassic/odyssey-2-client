@@ -1,10 +1,10 @@
 import * as net from 'net';
 import { EventEmitter } from 'events';
-import { Message } from 'odyssey-2-shared';
+import { Message } from '@odyssey/shared';
 
 export class Network extends EventEmitter {
   protected socket: net.Socket;
-  private data: Buffer;
+  private cache: Buffer = Buffer.allocUnsafe(0);
   private msg: Message;
   private packetOrder: number = 0;
 
@@ -22,7 +22,22 @@ export class Network extends EventEmitter {
     });
   }
 
-  public sendMessage(id: number, data: Buffer) {
+  /**
+   * Sends a message to the server
+   * 
+   * @param message 
+   */
+  public sendMessage(message: Message) {
+    this.send(message.id, message.data);
+  }
+
+  /**
+   * Sends a message to the server
+   * 
+   * @param id 
+   * @param data 
+   */
+  public send(id: number, data: Buffer) {
     let length: number = data.length + 1;
     let buffer: Buffer = Buffer.allocUnsafe(length + 4);
     let checksum: number = id;
@@ -48,29 +63,36 @@ export class Network extends EventEmitter {
     this.socket.write(buffer);
   }
 
+  /**
+   * Data event handler for the client Socket
+   * 
+   * @param data 
+   */
   protected onData(data: Buffer) {
-    let remainingData: Buffer;
+    do {
+      if (!this.msg) {
+        data = Buffer.concat([this.cache, data], this.cache.length + data.length);
+        if (data.length < 5) {
+          console.log('Need to cache not enough data');
+          this.cache = data;
+          return;
+        }
 
-    if (!this.msg) {
-      if (data.length < 5) {
-        console.log('Need to cache not enough data');
-        //Need to cache this data
-        return;
+        this.cache = Buffer.allocUnsafe(0);
+        let length = data.readUInt16BE(0) - 1; //We're not including the Packet ID
+        let msgId = data.readUInt8(4);
+        this.msg = new Message(msgId, length);
+        data = this.msg.append(data.slice(5));
+      }
+      else {
+        data = this.msg.append(data);
       }
 
-      let length = data.readUInt16BE(0) - 1; //We're not including the Packet ID
-      let msgId = data.readUInt8(4);
-      this.msg = new Message(msgId, length);
-      remainingData = this.msg.append(data.slice(5));
-    }
-    else {
-      remainingData = this.msg.append(data);
-    }
+      if (this.msg.isComplete()) {
+        this.emit('message', this.msg);
+        this.msg = null;
+      }
 
-    if (this.msg.isComplete()) {
-      this.emit('message', this.msg);
-      this.msg = null;
-    }
-
+    } while (data.length > 0);
   }
 }
