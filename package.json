@@ -10,9 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@odyssey/shared": "0.0.1",
-    "electron": "^1.7.9",
-    "mithril": "^1.1.5"
+    "@odyssey/shared": "^0.1.0",
+    "electron": "^1.8.1",
+    "mithril": "^1.1.6"
   },
   "devDependencies": {}
 }
