@@ -24,71 +24,52 @@ export class Network extends EventEmitter {
 
   /**
    * Sends a message to the server
-   * 
-   * @param message 
+   *
+   * @param message
    */
   public sendMessage(message: Message) {
-    this.send(message.id, message.data);
+    this.send(message.system, message.id, message.data);
   }
 
-  /**
-   * Sends a message to the server
-   * 
-   * @param id 
-   * @param data 
-   */
-  public send(id: number, data: Buffer) {
-    let length: number = data.length + 1;
+  public send(system: number, id: number, data: Buffer) {
+    let length: number = data.length;
     let buffer: Buffer = Buffer.allocUnsafe(length + 4);
-    let checksum: number = id;
-    let len = data.length;
-
-    for (let i = 0; i < len; i++) {
-      checksum += data.readUInt8(i);
-    }
-
-    checksum = checksum * 20 % 194;
 
     buffer.writeUInt16BE(length, 0);
-    buffer.writeUInt8(checksum, 2);
-    buffer.writeUInt8(this.packetOrder, 3);
-    buffer.writeUInt8(id, 4);
-    data.copy(buffer, 5, 0);
-
-    this.packetOrder++;
-    if (this.packetOrder > 200) {
-      this.packetOrder = 0;
-    }
+    buffer.writeUInt8(system, 2);
+    buffer.writeUInt8(id, 3);
+    data.copy(buffer, 4, 0);
 
     this.socket.write(buffer);
   }
 
   /**
    * Data event handler for the client Socket
-   * 
-   * @param data 
+   *
+   * @param data
    */
   protected onData(data: Buffer) {
     do {
       if (!this.msg) {
         data = Buffer.concat([this.cache, data], this.cache.length + data.length);
-        if (data.length < 5) {
+        if (data.length < 4) {
           console.log('Need to cache not enough data');
           this.cache = data;
           return;
         }
 
         this.cache = Buffer.allocUnsafe(0);
-        let length = data.readUInt16BE(0) - 1; //We're not including the Packet ID
-        let msgId = data.readUInt8(4);
-        this.msg = new Message(msgId, length);
+        let length = data.readUInt16BE(0); //We're not including the Packet ID
+        let system = data.readUInt8(2);
+        let msgId = data.readUInt8(3);
+        this.msg = new Message(system, msgId, length);
         data = this.msg.append(data.slice(5));
       }
       else {
         data = this.msg.append(data);
       }
 
-      if (this.msg.isComplete()) {
+      if (this.msg.complete) {
         this.emit('message', this.msg);
         this.msg = null;
       }
