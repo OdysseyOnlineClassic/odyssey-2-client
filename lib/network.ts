@@ -35,6 +35,8 @@ export class Network extends EventEmitter {
     let length: number = data.length;
     let buffer: Buffer = Buffer.allocUnsafe(length + 4);
 
+    console.log(`${system}:${id}`);
+
     buffer.writeUInt16BE(length, 0);
     buffer.writeUInt8(system, 2);
     buffer.writeUInt8(id, 3);

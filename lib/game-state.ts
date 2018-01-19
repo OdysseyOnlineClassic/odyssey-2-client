@@ -1,4 +1,8 @@
 import { Network } from './network';
+import { Message } from '@odyssey/shared';
+import { Enums } from '@odyssey/shared';
+import { Account } from './game/account';
+import { EventEmitter } from 'events';
 
 export enum States {
   Disconnected,
@@ -7,24 +11,29 @@ export enum States {
   Playing
 }
 
-export class GameState {
+export class GameState extends EventEmitter {
+  protected systems;
   protected state: States = States.Disconnected;
   protected network: Network;
 
-  constructor() {
+  public readonly account: Account = new Account(this);
 
+  constructor() {
+    super();
   }
 
   async connect(host, port) {
     this.network = new Network(host, port);
+    this.network.on('message', (message: Message) => { this.process(message); })
     await this.network.connect();
     this.state = States.Connected;
   }
 
-  login(username, password) {
-    let data = Buffer.from(username, 'utf8');
-    data = Buffer.concat([data, Buffer.from([0])]);
-    data = Buffer.concat([data, Buffer.from(password, 'utf8')]);
-    this.network.send(1, data);
+  process(msg: Message) {
+    this.emit(Enums.Systems[msg.system], msg);
+  }
+
+  send(system: number, id: number, data: Buffer) {
+    this.network.send(system, id, data);
   }
 }

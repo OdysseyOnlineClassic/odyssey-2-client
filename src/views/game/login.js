@@ -3,8 +3,8 @@ let Auth = require('../../models/auth');
 
 module.exports = Login;
 
-function Login(network) {
-  let auth = new Auth(network);
+function Login(game) {
+  let auth = new Auth(game);
   return {
     canSubmit: false,
     view: (vnode) => {

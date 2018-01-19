@@ -1,8 +1,9 @@
 'use strict';
+const Ody = require('@odyssey/shared');
 
 class Auth {
-  constructor(net) {
-    this.net = net;
+  constructor(game) {
+    this.game = game;
     this.username = '';
     this.password = '';
   }
@@ -19,11 +20,7 @@ class Auth {
     console.log('Login');
     console.log(this.username);
     console.log(this.password);
-    const data = Buffer.allocUnsafe(this.username.length + this.password.length + 1);
-    Buffer.from(this.username).copy(data, 0, 0);
-    data.writeUInt8(0, this.username.length);
-    Buffer.from(this.password).copy(data, this.username.length + 1, 0);
-    net.sendMessage(1, data);
+    game.account.login(this.username, this.password);
   }
 }
 
