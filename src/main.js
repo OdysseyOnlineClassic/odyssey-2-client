@@ -1,6 +1,7 @@
 'use-strict';
 
 const { app, BrowserWindow } = require('electron');
+const fs = require('fs');
 const path = require('path');
 const url = require('url');
 const Network = require('./bin/network').Network;
@@ -11,8 +12,27 @@ const GameState = require('./bin/game-state');
 let win;
 
 function createWindow() {
+  const initPath = path.join(app.getPath('appData'), "init.json");
+  let bounds = {
+    width: 800,
+    height: 600
+  };
+
+  try {
+    bounds = JSON.parse(fs.readFileSync(initPath, 'utf8'));
+  }
+  catch (e) {
+  }
   // Create the browser window.
-  win = new BrowserWindow({ width: 300, height: 600, titleBarStyle: "hidden" })
+
+  // Create the browser window.
+  win = new BrowserWindow({ width: bounds.width, height: bounds.height, titleBarStyle: "hidden" })
+
+  win.on("close", function () {
+    let data = win.getBounds();
+    fs.writeFileSync(initPath, JSON.stringify(data));
+  })
+
   win.odyssey = {
     GameState: GameState,
     Network: Network,

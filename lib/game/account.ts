@@ -8,7 +8,10 @@ export class Account {
   }
 
   process(msg: Message) {
-
+    switch (msg.id) {
+      case 1:
+        break;
+    }
   }
 
   create(username, password) {
