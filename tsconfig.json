@@ -2,20 +2,14 @@
   "compilerOptions": {
     "alwaysStrict": true,
     "experimentalDecorators": true,
-    "moduleResolution": "node",
-    "module": "none",
-    "noImplicitAny": false,
-    "outDir": "src/bin",
+    "jsx": "react",
+    "module": "commonjs",
+    "noImplicitAny": true,
+    "outDir": "./dist/",
     "sourceMap": true,
     "target": "es6"
   },
   "include": [
-    "node_modules/@types/node/index.d.ts",
-    "definitions/**/*.d.ts",
-    "lib/**/*"
+    "./src/**/*"
   ],
-  "exclude": [
-    "node_modules",
-    "bin"
-  ]
 }
